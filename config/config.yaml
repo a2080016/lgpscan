@@ -1,0 +1,20 @@
+lgp:
+  paths: 
+    - C:\Users\a2080\Documents\ServiceDesk\1Cv8Log\20211030000000.lgp 
+    - C:\Users\a2080\Documents\ServiceDesk\1Cv8Log\20211031000000.lgp
+  export:
+    clickhouse:
+      enabled: true
+      server: localhost
+      port: 3000
+    json:
+      enabled: true
+      path: C:\Users\a2080\Documents\
+debug:
+  # Выводить конфигурацию приложения
+  print config: true
+  # Выводить массивы считанные из lgf файлов
+  print lgf maps: false
+  # Выводить события считанные из lgp файлов
+  print lgp events: true
+  
