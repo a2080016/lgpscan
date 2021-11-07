@@ -1,0 +1,20 @@
+﻿1CV8LOG(ver 2.0)
+3b32690e-5aaa-409b-855a-d7b8caa3cde3
+
+{2,"a2080016PC",1},
+{3,"Designer",1},
+{4,"_$Session$_.AuthenticationError",1},
+{1,1473b252-7882-4824-a433-0ef2b18d9bf4,"Бессмертный Александр Николаевич",1},
+{4,"_$Session$_.Authentication",2},
+{13,1,1},
+{4,"_$Session$_.Start",3},
+{3,"1CV8C",2},
+{4,"_$Transaction$_.Begin",4},
+{4,"_$Transaction$_.Commit",5},
+{1,071523a4-516f-4fce-ba4b-0d11ab7a1893,"",2},
+{3,"BackgroundJob",3},
+{13,1,2},
+{4,"_$Session$_.Finish",6},
+{4,"_$Data$_.Update",7},
+{5,fc67b510-3fb4-4305-92d2-c252bc718f03,"РегистрСведений.СведенияОПользователях",1},
+{5,9a28a96a-f72e-438a-b9be-a8d9f4df944a,"Документ._Заявка",2}

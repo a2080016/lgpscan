@@ -10,5 +10,6 @@ func init() {
 }
 
 func main() {
-	lgpparser.ParseLgp()
+	lgpparser.ParseLgpTst()
+	logger.PrintInf("LGP Scanner, завершение работы")
 }

@@ -12,7 +12,7 @@ lgp:
       path: C:\Users\a2080\Documents\
 debug:
   # Выводить конфигурацию приложения
-  print config: true
+  print config: false
   # Выводить массивы считанные из lgf файлов
   print lgf maps: false
   # Выводить события считанные из lgp файлов

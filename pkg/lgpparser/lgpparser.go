@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"bytes"
 	"fmt"
+	"io"
 	"log"
 	"os"
 	"strconv"
@@ -78,10 +79,41 @@ func ParseLgp() {
 			eventEnd = false
 		}
 	}
+}
 
-	for lgpScanner.Scan() {
+func ParseLgpTst() {
 
-		NowString := lgpScanner.Text()
+	eventBuffer := bytes.Buffer{}
+	eventsList := []event{}
+
+	eventBegin := false
+	eventEnd := false
+
+	// Парсим LGF
+	Dm = lgfparser.ParseLgf(`E:\go\lgpscan\test\1Cv8.lgf`)
+
+	lgpFile, err := os.Open(`E:\go\lgpscan\test\20211030000000.lgp`)
+	if err != nil {
+		panic(err)
+	}
+	defer lgpFile.Close()
+
+	lgpFile.Seek(618, os.SEEK_SET)
+
+	lgpReader := bufio.NewReader(lgpFile)
+
+	var line []byte
+	fPos := 0 // or saved position
+
+	for i := 1; ; i++ {
+		line, err = lgpReader.ReadBytes('\n')
+
+		if err != nil {
+			break
+		}
+		fPos += len(line)
+
+		NowString := string(line[0 : len(line)-2])
 
 		if len(NowString) > 0 && NowString[0] == '{' {
 			eventBegin = true
@@ -91,7 +123,7 @@ func ParseLgp() {
 		}
 
 		if eventBegin {
-			eventBuffer.WriteString(lgpScanner.Text())
+			eventBuffer.WriteString(NowString)
 		}
 
 		if eventBegin && eventEnd {
@@ -102,9 +134,37 @@ func ParseLgp() {
 			eventBegin = false
 			eventEnd = false
 		}
+
+	}
+
+	if err != io.EOF {
+		log.Fatal(err)
 	}
 
 }
+
+// func withScanner(input io.ReadSeeker, start int64) error {
+
+// 	fmt.Println("--SCANNER, start:", start)
+
+// 	if _, err := input.Seek(start, 0); err != nil {
+// 		return err
+// 	}
+// 	scanner := bufio.NewScanner(input)
+
+// 	pos := start
+// 	scanLines := func(data []byte, atEOF bool) (advance int, token []byte, err error) {
+// 		advance, token, err = bufio.ScanLines(data, atEOF)
+// 		pos += int64(advance)
+// 		return
+// 	}
+// 	scanner.Split(scanLines)
+
+// 	for scanner.Scan() {
+// 		fmt.Printf("Pos: %d, Scanned: %s\n", pos, scanner.Text())
+// 	}
+// 	return scanner.Err()
+// }
 
 func parseEventString(eventString string) event {
 
