@@ -1,7 +1,11 @@
 lgp:
   paths: 
-    - C:\Users\a2080\Documents\ServiceDesk\1Cv8Log\20211030000000.lgp 
-    - C:\Users\a2080\Documents\ServiceDesk\1Cv8Log\20211031000000.lgp
+    - aaa: qqq 
+        ccc: asd
+    - bbb: www
+        ccc: asdsdf
+    - bbb2: eee
+        ccc: asd22sdf
   export:
     clickhouse:
       enabled: true

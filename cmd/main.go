@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/a2080016/lgpscan/internal/logger"
-	"github.com/a2080016/lgpscan/pkg/lgpparser"
+	"github.com/a2080016/lgpscan/pkg/lgpmanager"
 )
 
 func init() {
@@ -10,6 +10,8 @@ func init() {
 }
 
 func main() {
-	lgpparser.ParseLgpTst()
+
+	lgpmanager.Scan()
+	//lgpparser.ParseLgpTst()
 	logger.PrintInf("LGP Scanner, завершение работы")
 }
