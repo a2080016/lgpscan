@@ -10,7 +10,6 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/a2080016/lgpscan/internal/cfg"
 	"github.com/a2080016/lgpscan/pkg/lgfparser"
 )
 
@@ -198,9 +197,9 @@ func parseEventString(eventString string) event {
 
 	}
 
-	if cfg.AppConfig.Debug.PrintLgpEvents {
-		print_event(e)
-	}
+	// if cfg.AppConfig.Debug.PrintLgpEvents {
+	// 	print_event(e)
+	// }
 
 	return e
 }

@@ -1,0 +1,24 @@
+lgp:
+  paths: 
+    - aaa: qqq 
+        ccc: asd
+    - bbb: www
+        ccc: asdsdf
+    - bbb2: eee
+        ccc: asd22sdf
+  export:
+    clickhouse:
+      enabled: true
+      server: localhost
+      port: 3000
+    json:
+      enabled: true
+      path: C:\Users\a2080\Documents\
+debug:
+  # Выводить конфигурацию приложения
+  print config: false
+  # Выводить массивы считанные из lgf файлов
+  print lgf maps: false
+  # Выводить события считанные из lgp файлов
+  print lgp events: true
+  

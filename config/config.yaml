@@ -1,24 +1,9 @@
-lgp:
-  paths: 
-    - aaa: qqq 
-        ccc: asd
-    - bbb: www
-        ccc: asdsdf
-    - bbb2: eee
-        ccc: asd22sdf
-  export:
-    clickhouse:
-      enabled: true
-      server: localhost
-      port: 3000
-    json:
-      enabled: true
-      path: C:\Users\a2080\Documents\
-debug:
-  # Выводить конфигурацию приложения
-  print config: false
-  # Выводить массивы считанные из lgf файлов
-  print lgf maps: false
-  # Выводить события считанные из lgp файлов
-  print lgp events: true
-  
+ds_estate:
+  name: 1ertyet11
+  path: 2rtyerty22
+ds_finance:
+  name: 3ertyeyt33
+  path: 4etyer44
+ds_docflow:
+  name: 33uyrtu3
+  path: 4rtyu44
