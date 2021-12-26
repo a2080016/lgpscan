@@ -1,0 +1,18 @@
+Debug: true
+InfoBases:
+  ds_estate:
+    LgpPath: E:\go\lgpscan\test
+    ClickHouseExport: true
+    ClickHouseServer: localhost
+    ClickHousePort: 90
+    JsonExport: true
+    JsonExportPath: E:\go\lgpscan\test
+    YamlExport: true
+    YamlExportPath: E:\go\lgpscan\test
+    CsvExport: true
+    CsvExportPath: E:\go\lgpscan\test
+    Show: true
+  ds_finance:
+    LgpPath: E:\go\lgpscan\test
+    YamlExport: true
+    YamlExportPath: E:\go\lgpscan\test

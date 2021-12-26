@@ -10,10 +10,11 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/a2080016/lgpscan/internal/cfg"
 	"github.com/a2080016/lgpscan/pkg/lgfparser"
 )
 
-var Dm lgfparser.Data_maps
+var GeneralInfo lgfparser.GeneralInfoType
 
 type event struct {
 	datetime   time.Time // 1. Дата и время события в формате "20060102150405"
@@ -45,51 +46,7 @@ func ParseLgp() {
 	eventEnd := false
 
 	// Парсим LGF
-	Dm = lgfparser.ParseLgf(`C:\Users\a2080\Documents\ServiceDesk\1Cv8Log\1Cv8.lgf`)
-
-	lgpFile, err := os.Open(`C:\Users\a2080\Documents\ServiceDesk\1Cv8Log\20211031000000t.lgp`)
-	if err != nil {
-		panic(err)
-	}
-	defer lgpFile.Close()
-
-	lgpScanner := bufio.NewScanner(lgpFile)
-	for lgpScanner.Scan() {
-
-		NowString := lgpScanner.Text()
-
-		if len(NowString) > 0 && NowString[0] == '{' {
-			eventBegin = true
-		} else if NowString == "}," {
-			eventEnd = true
-		} else {
-		}
-
-		if eventBegin {
-			eventBuffer.WriteString(lgpScanner.Text())
-		}
-
-		if eventBegin && eventEnd {
-
-			eventsList = append(eventsList, parseEventString(eventBuffer.String()))
-
-			eventBuffer.Reset()
-			eventBegin = false
-			eventEnd = false
-		}
-	}
-}
-
-func ParseLgpTst() {
-
-	eventBuffer := bytes.Buffer{}
-	eventsList := []event{}
-
-	eventBegin := false
-	eventEnd := false
-
-	// Парсим LGF
-	Dm = lgfparser.ParseLgf(`E:\go\lgpscan\test\1Cv8.lgf`)
+	GeneralInfo = lgfparser.ParseLgf(cfg.Config.InfoBases["ds_estate"].LgpPath + `\1Cv8.lgf`)
 
 	lgpFile, err := os.Open(`E:\go\lgpscan\test\20211030000000.lgp`)
 	if err != nil {
@@ -142,29 +99,6 @@ func ParseLgpTst() {
 
 }
 
-// func withScanner(input io.ReadSeeker, start int64) error {
-
-// 	fmt.Println("--SCANNER, start:", start)
-
-// 	if _, err := input.Seek(start, 0); err != nil {
-// 		return err
-// 	}
-// 	scanner := bufio.NewScanner(input)
-
-// 	pos := start
-// 	scanLines := func(data []byte, atEOF bool) (advance int, token []byte, err error) {
-// 		advance, token, err = bufio.ScanLines(data, atEOF)
-// 		pos += int64(advance)
-// 		return
-// 	}
-// 	scanner.Split(scanLines)
-
-// 	for scanner.Scan() {
-// 		fmt.Printf("Pos: %d, Scanned: %s\n", pos, scanner.Text())
-// 	}
-// 	return scanner.Err()
-// }
-
 func parseEventString(eventString string) event {
 
 	var e event
@@ -197,9 +131,9 @@ func parseEventString(eventString string) event {
 
 	}
 
-	// if cfg.AppConfig.Debug.PrintLgpEvents {
-	// 	print_event(e)
-	// }
+	if cfg.Config.InfoBases["ds_estate"].Show {
+		printEvent(e)
+	}
 
 	return e
 }
@@ -279,17 +213,17 @@ func textBlockToTrStatus(textBlock string) string {
 }
 
 func textBlockToUser(textBlock string) string {
-	return Dm.Users[textBlock]
+	return GeneralInfo.Users[textBlock]
 }
 
 func textBlockToPC(textBlock string) string {
 
-	return Dm.Computers[textBlock]
+	return GeneralInfo.Computers[textBlock]
 }
 
 func textBlockToApp(textBlock string) string {
 
-	return Dm.Apps[textBlock]
+	return GeneralInfo.Apps[textBlock]
 }
 
 func textBlockToConn(textBlock string) int {
@@ -305,7 +239,7 @@ func textBlockToConn(textBlock string) int {
 
 func textBlockToEvent(textBlock string) string {
 
-	return Dm.Events[textBlock]
+	return GeneralInfo.Events[textBlock]
 
 }
 
@@ -333,7 +267,7 @@ func textBlockToComment(textBlock string) string {
 
 func textBlockToMetadata(textBlock string) string {
 
-	return Dm.Metadata[textBlock]
+	return GeneralInfo.Metadata[textBlock]
 }
 
 func textBlockToData(textBlock string) string {
@@ -348,7 +282,7 @@ func textBlockToDataView(textBlock string) string {
 
 func textBlockToServer(textBlock string) string {
 
-	return Dm.Servers[textBlock]
+	return GeneralInfo.Servers[textBlock]
 }
 
 func textBlockToPort(textBlock string) int {
@@ -372,7 +306,7 @@ func textBlockToSession(textBlock string) int {
 	return sess
 }
 
-func print_event(e event) {
+func printEvent(e event) {
 
 	fmt.Println("******************************************************************")
 	fmt.Println("1.   datetime: ", e.datetime)

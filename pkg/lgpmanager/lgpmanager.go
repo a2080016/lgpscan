@@ -1,14 +1,10 @@
 package lgpmanager
 
-import (
-	"fmt"
-
-	"github.com/a2080016/lgpscan/internal/cfg"
-)
+import "github.com/a2080016/lgpscan/pkg/lgpparser"
 
 func Scan() {
 
-	fmt.Println(cfg.AppConfig)
+	lgpparser.ParseLgp()
 
 	//for i := 0; i < len(cfg.AppConfig); i++ {
 

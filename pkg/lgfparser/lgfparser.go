@@ -2,14 +2,11 @@ package lgfparser
 
 import (
 	"bufio"
-	"fmt"
 	"os"
 	"strings"
-
-	"github.com/a2080016/lgpscan/internal/cfg"
 )
 
-type Data_maps struct {
+type GeneralInfoType struct {
 	Users      map[string]string
 	Computers  map[string]string
 	Apps       map[string]string
@@ -20,9 +17,9 @@ type Data_maps struct {
 	Sec_ports  map[string]string
 }
 
-func ParseLgf(lgf_file_path string) Data_maps {
+func ParseLgf(lgfPath string) GeneralInfoType {
 
-	var a Data_maps
+	var a GeneralInfoType
 
 	a.Users = make(map[string]string)
 	a.Computers = make(map[string]string)
@@ -33,7 +30,7 @@ func ParseLgf(lgf_file_path string) Data_maps {
 	a.Main_ports = make(map[string]string)
 	a.Sec_ports = make(map[string]string)
 
-	lgf_file, err := os.Open(`C:\Users\a2080\Documents\ServiceDesk\1Cv8Log\1Cv8.lgf`)
+	lgf_file, err := os.Open(lgfPath)
 	if err != nil {
 		panic(err)
 	}
@@ -69,9 +66,9 @@ func ParseLgf(lgf_file_path string) Data_maps {
 		}
 	}
 
-	if cfg.AppConfig.Debug.PrintLgfMaps {
-		fmt.Println(a)
-	}
+	//if cfg.Config.Debug.PrintLgfMaps {
+	//	fmt.Println(a)
+	//}
 
 	return a
 }
