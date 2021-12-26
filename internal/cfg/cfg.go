@@ -4,25 +4,46 @@ import (
 	"os"
 
 	"github.com/a2080016/lgpscan/internal/logger"
-	"gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v3"
 )
 
-type Config map[string][]map[string]string
+type ConfigType struct {
+	Debug     bool `yaml:"Debug"`
+	InfoBases map[string]struct {
+		LgpPath          string `yaml:"LgpPath"`
+		ClickHouseExport bool   `yaml:"ClickHouseExport"`
+		ClickHouseServer string `yaml:"ClickHouseServer"`
+		ClickHousePort   int    `yaml:"ClickHousePort"`
+		JSONExport       bool   `yaml:"JSONExport"`
+		JSONExportPath   string `yaml:"JSONExportPath"`
+		YamlExport       bool   `yaml:"YamlExport"`
+		YamlExportPath   string `yaml:"YamlExportPath"`
+	} `yaml:"InfoBases,flow"`
+}
 
-var AppConfig Config
+var Config ConfigType
 
 func init() {
 
-	cfgPath := `E:\go\lgpscan\config\config.yaml`
+	// Определяем текущий каталог для поиска конфиг. файла
 
-	file, err := os.Open(cfgPath)
+	currentDirectory, err := os.Getwd()
 	if err != nil {
 		logger.ErrLog.Fatal(err)
 	}
-	defer file.Close()
+	logger.InfLog.Printf(currentDirectory)
 
-	yDecoder := yaml.NewDecoder(file)
-	yDecoder.Decode(&AppConfig)
+	configPath := currentDirectory + `\config\config.yaml`
+	logger.InfLog.Printf(configPath)
+
+	configFile, err := os.Open(configPath)
+	if err != nil {
+		logger.ErrLog.Fatal(err)
+	}
+	defer configFile.Close()
+
+	yamlDecoder := yaml.NewDecoder(configFile)
+	yamlDecoder.Decode(&Config)
 
 	//if AppConfig.Debug.PrintConfig {
 
