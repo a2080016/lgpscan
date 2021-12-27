@@ -4,7 +4,7 @@ import "github.com/a2080016/lgpscan/pkg/lgpparser"
 
 func Scan() {
 
-	lgpparser.ParseLgp()
+	lgpparser.ScanLgp()
 
 	//for i := 0; i < len(cfg.AppConfig); i++ {
 

@@ -35,7 +35,7 @@ func init() {
 	}
 	logger.InfLog.Printf(currentDirectory)
 
-	configPath := currentDirectory + `\config\config.yaml`
+	configPath := currentDirectory + `\data\config.yaml`
 	logger.InfLog.Printf(configPath)
 
 	configFile, err := os.Open(configPath)

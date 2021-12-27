@@ -5,12 +5,15 @@ import (
 	"bytes"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"log"
 	"os"
 	"strconv"
 	"time"
 
 	"github.com/a2080016/lgpscan/internal/cfg"
+	"github.com/a2080016/lgpscan/internal/logger"
+	"github.com/a2080016/lgpscan/internal/status"
 	"github.com/a2080016/lgpscan/pkg/lgfparser"
 )
 
@@ -37,7 +40,34 @@ type event struct {
 	session    int       // 17. Сеанс
 }
 
-func ParseLgp() {
+func ScanLgp() {
+
+	status.ReadStatus()
+
+	// Парсим LGF
+	GeneralInfo = lgfparser.ParseLgf(cfg.Config.InfoBases["ds_estate"].LgpPath + `\1Cv8.lgf`)
+
+	lgpFiles, err := ioutil.ReadDir(cfg.Config.InfoBases["ds_estate"].LgpPath)
+
+	if err != nil {
+		logger.ErrLog.Fatal(err)
+	}
+
+	for _, lgpFile := range lgpFiles {
+		logger.InfLog.Println(lgpFile.Name(), lgpFile.IsDir())
+		ScanLgpFile(cfg.Config.InfoBases["ds_estate"].LgpPath+`\`+lgpFile.Name(), status.Status.InfoBases["ds_estate"].CurrentPos)
+	}
+
+	status.WriteStatus()
+}
+
+func ScanLgpFile(lgpFileName string, pos int64) {
+
+	lgpFile, err := os.Open(lgpFileName)
+	if err != nil {
+		panic(err)
+	}
+	defer lgpFile.Close()
 
 	eventBuffer := bytes.Buffer{}
 	eventsList := []event{}
@@ -45,21 +75,12 @@ func ParseLgp() {
 	eventBegin := false
 	eventEnd := false
 
-	// Парсим LGF
-	GeneralInfo = lgfparser.ParseLgf(cfg.Config.InfoBases["ds_estate"].LgpPath + `\1Cv8.lgf`)
-
-	lgpFile, err := os.Open(`E:\go\lgpscan\test\20211030000000.lgp`)
-	if err != nil {
-		panic(err)
-	}
-	defer lgpFile.Close()
-
-	lgpFile.Seek(618, os.SEEK_SET)
+	lgpFile.Seek(pos, os.SEEK_SET)
 
 	lgpReader := bufio.NewReader(lgpFile)
 
 	var line []byte
-	fPos := 0 // or saved position
+	fPos := int(pos) // or saved position
 
 	for i := 1; ; i++ {
 		line, err = lgpReader.ReadBytes('\n')
