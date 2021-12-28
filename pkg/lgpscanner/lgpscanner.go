@@ -1,4 +1,4 @@
-package lgpmanager
+package lgpscanner
 
 import "github.com/a2080016/lgpscan/pkg/lgpparser"
 
