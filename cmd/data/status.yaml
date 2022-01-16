@@ -1,1 +1,4 @@
-InfoBases: { www: { CurrentFile: "222", CurrentPos: 0 } }
+InfoBases:
+    ds_estate:
+        CurrentFile: 20211030000000.lgp
+        CurrentPos: 1223

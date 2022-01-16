@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-type GeneralInfoType struct {
+type LgfInfoType struct {
 	Users      map[string]string
 	Computers  map[string]string
 	Apps       map[string]string
@@ -17,9 +17,9 @@ type GeneralInfoType struct {
 	Sec_ports  map[string]string
 }
 
-func ParseLgf(lgfPath string) GeneralInfoType {
+func ParseLgf(lgfPath string) LgfInfoType {
 
-	var a GeneralInfoType
+	var a LgfInfoType
 
 	a.Users = make(map[string]string)
 	a.Computers = make(map[string]string)

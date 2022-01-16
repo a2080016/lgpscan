@@ -33,10 +33,8 @@ func init() {
 	if err != nil {
 		logger.ErrLog.Fatal(err)
 	}
-	logger.InfLog.Printf(currentDirectory)
 
 	configPath := currentDirectory + `\data\config.yaml`
-	logger.InfLog.Printf(configPath)
 
 	configFile, err := os.Open(configPath)
 	if err != nil {
@@ -46,7 +44,5 @@ func init() {
 
 	yamlDecoder := yaml.NewDecoder(configFile)
 	yamlDecoder.Decode(&Config)
-
-	logger.InfLog.Println(Config)
 
 }

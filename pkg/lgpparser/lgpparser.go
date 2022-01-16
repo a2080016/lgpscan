@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"path/filepath"
 	"strconv"
 	"time"
 
@@ -17,7 +18,8 @@ import (
 	"github.com/a2080016/lgpscan/pkg/lgfparser"
 )
 
-var GeneralInfo lgfparser.GeneralInfoType
+var LgfInfo lgfparser.LgfInfoType
+var CurrInfoBase string
 
 type event struct {
 	datetime   time.Time // 1. Дата и время события в формате "20060102150405"
@@ -40,25 +42,74 @@ type event struct {
 	session    int       // 17. Сеанс
 }
 
-func ScanLgp() {
+func ScanLgpFiles(infoBase string) {
+
+	CurrInfoBase = infoBase
+	lgpPath := cfg.Config.InfoBases[infoBase].LgpPath
+
+	currFile := ""
+	currPos := int64(0)
 
 	status.ReadStatus()
 
-	// Парсим LGF
-	GeneralInfo = lgfparser.ParseLgf(cfg.Config.InfoBases["ds_estate"].LgpPath + `\1Cv8.lgf`)
+	_, exists := status.CurrStatus.InfoBases[infoBase]
 
-	lgpFiles, err := ioutil.ReadDir(cfg.Config.InfoBases["ds_estate"].LgpPath)
+	if exists == true {
+		currFile = status.CurrStatus.InfoBases[infoBase].CurrentFile
+		currPos = status.CurrStatus.InfoBases[infoBase].CurrentPos
+	} else {
+
+		lgpFiles, err := ioutil.ReadDir(lgpPath)
+
+		if err != nil {
+			logger.ErrLog.Fatal(err)
+		}
+
+		for _, lgpFile := range lgpFiles {
+
+			lgpFileName := lgpFile.Name()
+
+			if filepath.Ext(lgpFileName) == ".lgp" {
+
+				currFile = lgpFile.Name()
+				currPos = 0
+				break
+			}
+
+		}
+
+		status.CurrStatus.InfoBases[infoBase] = struct {
+			CurrentFile string "yaml:\"CurrentFile\""
+			CurrentPos  int64  "yaml:\"CurrentPos\""
+		}{
+			CurrentFile: currFile,
+			CurrentPos:  currPos,
+		}
+
+		status.WriteStatus()
+
+	}
+
+	// Парсим LGF
+	LgfInfo = lgfparser.ParseLgf(lgpPath + `\1Cv8.lgf`)
+	lgpFiles, err := ioutil.ReadDir(lgpPath)
 
 	if err != nil {
 		logger.ErrLog.Fatal(err)
 	}
 
 	for _, lgpFile := range lgpFiles {
-		logger.InfLog.Println(lgpFile.Name(), lgpFile.IsDir())
-		ScanLgpFile(cfg.Config.InfoBases["ds_estate"].LgpPath+`\`+lgpFile.Name(), status.Status.InfoBases["ds_estate"].CurrentPos)
+
+		lgpFileName := lgpFile.Name()
+
+		if filepath.Ext(lgpFileName) == ".lgp" && lgpFileName == currFile {
+
+			logger.InfLog.Println(lgpFile.Name(), lgpFile.IsDir())
+			ScanLgpFile(lgpPath+`\`+lgpFile.Name(), currPos)
+		}
+
 	}
 
-	status.WriteStatus()
 }
 
 func ScanLgpFile(lgpFileName string, pos int64) {
@@ -113,6 +164,16 @@ func ScanLgpFile(lgpFileName string, pos int64) {
 		}
 
 	}
+
+	status.CurrStatus.InfoBases[CurrInfoBase] = struct {
+		CurrentFile string "yaml:\"CurrentFile\""
+		CurrentPos  int64  "yaml:\"CurrentPos\""
+	}{
+		CurrentFile: filepath.Base(lgpFileName),
+		CurrentPos:  int64(fPos),
+	}
+
+	status.WriteStatus()
 
 	if err != io.EOF {
 		log.Fatal(err)
@@ -234,17 +295,17 @@ func textBlockToTrStatus(textBlock string) string {
 }
 
 func textBlockToUser(textBlock string) string {
-	return GeneralInfo.Users[textBlock]
+	return LgfInfo.Users[textBlock]
 }
 
 func textBlockToPC(textBlock string) string {
 
-	return GeneralInfo.Computers[textBlock]
+	return LgfInfo.Computers[textBlock]
 }
 
 func textBlockToApp(textBlock string) string {
 
-	return GeneralInfo.Apps[textBlock]
+	return LgfInfo.Apps[textBlock]
 }
 
 func textBlockToConn(textBlock string) int {
@@ -260,7 +321,7 @@ func textBlockToConn(textBlock string) int {
 
 func textBlockToEvent(textBlock string) string {
 
-	return GeneralInfo.Events[textBlock]
+	return LgfInfo.Events[textBlock]
 
 }
 
@@ -288,7 +349,7 @@ func textBlockToComment(textBlock string) string {
 
 func textBlockToMetadata(textBlock string) string {
 
-	return GeneralInfo.Metadata[textBlock]
+	return LgfInfo.Metadata[textBlock]
 }
 
 func textBlockToData(textBlock string) string {
@@ -303,7 +364,7 @@ func textBlockToDataView(textBlock string) string {
 
 func textBlockToServer(textBlock string) string {
 
-	return GeneralInfo.Servers[textBlock]
+	return LgfInfo.Servers[textBlock]
 }
 
 func textBlockToPort(textBlock string) int {

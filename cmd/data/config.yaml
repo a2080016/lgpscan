@@ -1,7 +1,10 @@
 Debug: true
 InfoBases:
+  # Уникальное имя информационной базы
   ds_estate:
+    # Папка с файлами журнала регистрации
     LgpPath: E:\go\lgpscan\test
+    # Параметры подключения к ClickHouse
     ClickHouseExport: true
     ClickHouseServer: localhost
     ClickHousePort: 90

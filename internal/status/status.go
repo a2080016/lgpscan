@@ -1,8 +1,6 @@
 package status
 
 import (
-	"fmt"
-	"io/ioutil"
 	"os"
 
 	"github.com/a2080016/lgpscan/internal/logger"
@@ -13,41 +11,33 @@ type StatusType struct {
 	InfoBases map[string]struct {
 		CurrentFile string `yaml:"CurrentFile"`
 		CurrentPos  int64  `yaml:"CurrentPos"`
-	} `yaml:"InfoBases,flow"`
+	} `yaml:"InfoBases"`
 }
 
-var Status StatusType
+var CurrStatus StatusType
 
+// Инициализирует файл статусов
+//
 func InitStatus(path string) {
 
-	Status.InfoBases = make(map[string]struct {
+	CurrStatus.InfoBases = make(map[string]struct {
 		CurrentFile string "yaml:\"CurrentFile\""
 		CurrentPos  int64  "yaml:\"CurrentPos\""
 	})
 
-	Status.InfoBases["www"] = struct {
-		CurrentFile string "yaml:\"CurrentFile\""
-		CurrentPos  int64  "yaml:\"CurrentPos\""
-	}{
-		CurrentFile: `222`,
-		CurrentPos:  0,
-	}
-
-	data, err := yaml.Marshal(&Status)
+	data, err := yaml.Marshal(&CurrStatus)
 
 	if err != nil {
 		logger.ErrLog.Fatal(err)
 	}
 
-	err2 := ioutil.WriteFile(path, data, 0)
+	err2 := os.WriteFile(path, data, 0666)
 
 	if err2 != nil {
-
 		logger.ErrLog.Fatal(err)
 	}
 
-	fmt.Println("data written")
-
+	logger.InfLog.Printf("InitStatus data written")
 }
 
 func ReadStatus() {
@@ -59,16 +49,15 @@ func ReadStatus() {
 	}
 
 	statusPath := currentDirectory + `\data\status.yaml`
-	logger.InfLog.Printf(statusPath)
 
 	statusFile, err := os.Open(statusPath)
 	if err != nil {
 		InitStatus(statusPath)
-
 	} else {
 		yamlDecoder := yaml.NewDecoder(statusFile)
-		yamlDecoder.Decode(&Status)
+		yamlDecoder.Decode(&CurrStatus)
 	}
+	statusFile.Close()
 
 }
 
@@ -82,15 +71,19 @@ func WriteStatus() {
 	logger.InfLog.Printf(currentDirectory)
 
 	statusPath := currentDirectory + `\data\status.yaml`
-	logger.InfLog.Printf(statusPath)
 
-	statusFile, err := os.Open(statusPath)
+	data, err := yaml.Marshal(&CurrStatus)
+
 	if err != nil {
 		logger.ErrLog.Fatal(err)
 	}
-	defer statusFile.Close()
 
-	yamlDecoder := yaml.NewDecoder(statusFile)
-	yamlDecoder.Decode(&Status)
+	err2 := os.WriteFile(statusPath, data, 0666)
+
+	if err2 != nil {
+		logger.ErrLog.Fatal(err2)
+	}
+
+	logger.InfLog.Printf("WriteStatus data written")
 
 }
